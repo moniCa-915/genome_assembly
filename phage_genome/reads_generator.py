@@ -7,9 +7,10 @@ def generator(genome, reads_len, overlap_len):
 
 if __name__ == "__main__":
     with open("phiX174.txt", "r") as file:
-        sequence = file.read().replace('\n', '')
-    read_length = 10
-    overlap_length = 5
+        sequence = file.read()
+
+    read_length = 100
+    overlap_length = 12
     reads = generator(sequence, read_length, overlap_length)
     
     # output reads
