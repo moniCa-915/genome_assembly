@@ -7,7 +7,6 @@ def overlapGraph(patterns):
         for j in range(len(patterns)):
             if i != j and patterns[i][1:] == patterns[j][:2]:
                 adjacent_matrix[i][j] = 1
-
     return adjacent_matrix
 
 def listGraph(adjacent_matrix):
@@ -19,15 +18,41 @@ def listGraph(adjacent_matrix):
                 adjacent_graph[i].append(j)
     return adjacent_graph
 
-def pathToGenome(adjacent_list):
+def DFSUtil(node, adjacent_list, visited, patterns, sequence):
+    visited[node] = True
+    for neighbor in adjacent_list[node]:
+        if visited[neighbor] == False:
+            sequence.append(patterns[neighbor][2])
+            DFSUtil(neighbor, adjacent_list, visited, patterns, sequence)
+    return visited
+
+def pathToGenome(adjacent_list, patterns):
+    seqExist = False
     # doing depth-first search (DFS)
-    return 0
+    for node in adjacent_list:
+        print(node)
+        visited = [False] * len(adjacent_list)
+        if not adjacent_list[node]:
+            continue
+        sequence = [patterns[node]]
+        DFSUtil(node, adjacent_list, visited, patterns, sequence)
+        
+    
+        if all(visited) == True:
+            print("".join(sequence))
+            # seqExist = True
+            # return seqExist
+    return seqExist
 
 if __name__ == "__main__":
     patterns = ["AAT", "ATG", "ATG", "ATG", "CAT", "CCA", "GAT", "GCC", "GGA", "GGG", "GTT", "TAA", "TGC", "TGG", "TGT"]
     graph_matrix = overlapGraph(patterns)
+    print(graph_matrix)
     adjacent_list = listGraph(graph_matrix)
     print(adjacent_list)
+    print(pathToGenome(adjacent_list, patterns))
+    # TAATGCCATGGGATGTT
+    # TAATGCCATGGATGTTG
 
 
 

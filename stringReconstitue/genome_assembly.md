@@ -19,4 +19,15 @@ However, reconstruct string from k-mers is complicated, especially there are rep
 # 3.3 String Reconstruction as a Walk in the Overlap Graph
 
 ## Code Challenge 3.3.1: Solve the String Spelled by a Genome Path Problem.
+The answer is different, need to review
+
+[path_to_genome](stringReconstitue/pathToGenome.py)
+
+# 3.4 Another Graph for String Reconstruction
+## Gluing nodes and de Bruijn graphs
+
+3-mer as node -> Assign 3-mer to edges
+
+
+
 
