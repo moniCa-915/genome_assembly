@@ -20,20 +20,25 @@ def listGraph(adjacent_matrix):
 
 def DFSUtil(node, adjacent_list, visited, patterns, sequence):
     visited[node] = True
-    for neighbor in adjacent_list[node]:
-        if visited[neighbor] == False:
-            sequence.append(patterns[neighbor][2])
-            DFSUtil(neighbor, adjacent_list, visited, patterns, sequence)
+    print(adjacent_list[node])
+    if adjacent_list[node]:
+        for neighbor in adjacent_list[node]:
+            if visited[neighbor] == False:
+                print("linked to: " + str(neighbor))
+                sequence.append(patterns[neighbor][2])
+                DFSUtil(neighbor, adjacent_list, visited, patterns, sequence)
+    else:
+        return visited
     return visited
 
 def pathToGenome(adjacent_list, patterns):
     seqExist = False
     # doing depth-first search (DFS)
     for node in adjacent_list:
-        print(node)
+        print("start from: " + str(node))
         visited = [False] * len(adjacent_list)
         if not adjacent_list[node]:
-            continue
+            pass
         sequence = [patterns[node]]
         DFSUtil(node, adjacent_list, visited, patterns, sequence)
         
