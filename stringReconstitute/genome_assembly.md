@@ -92,7 +92,7 @@ STOP and Think: Consider the following questions.
 3. How does the graph DeBruijn3(TAATGCCATGGGATGTT) compare to DeBruijn3(TAATGGGATGCCATGTT)?
 
 
-# Walking in the de Bruijn Graph
+# 3.5 Walking in the de Bruijn Graph
 
 ## Eulerian path
 
@@ -110,11 +110,10 @@ STOP and Think: Can you construct DeBruijnk(Text) if you don’t know Text but y
 
 ## Another way to construct de Bruijn graphs
 
-__CompositionGraph3(TAATGCCATGGGATGTT)__ 
-    
+__CompositionGraph3(TAATGCCATGGGATGTT)__: 
     3-mer composition of TAATGCCATGGGATGTT
 
-Each 3-mer is assigned to a directed edge, with its prefix labeling the first node of the edge and its suffix labeling the second node of the edge
+Each 3-mer is assigned to a directed __edge__, with its prefix labeling the first node of the edge and its suffix labeling the second node of the edge
 
 The edges of this graph are isolated, meaning that no two edges share a node.
 
@@ -125,3 +124,154 @@ The edges of this graph are isolated, meaning that no two edges share a node.
 
 
 STOP and Think: Glue identically labeled nodes in CompositionGraph3(TAATGCCATGGGATGTT). How does the resulting graph compare to DeBruijn3(TAATGCCATGGGATGTT)?
+
+__Gluing nodes with same labels__
+
+1. CompositionGraph3(TAATGCCATGGGATGTT) -> 15 isolated edges
+
+<figure>
+    <img src="./pic/3.5.3CompositionPath.png" alt="CompositionPath">
+    <figcaption>Figure 3.5.3: CompositionGraph3(TAATGCCATGGGATGTT) representation </figcaption>
+</figure>
+
+
+2. Glue the 15 isolated edges resulting into a path --> PathGraph3(TAATGCCATGGGATGTT)
+
+
+<figure>
+    <img src="./pic/3.5.4PathGraph.png" alt="PathGraph">
+    <figcaption>Figure 3.5.4: PathGraph3(TAATGCCATGGGATGTT) </figcaption>
+</figure>
+
+3. Keep gluing nodes of PathGraph3(TAATGCCATGGGATGTT) --> DeBruijn3(TAATGCCATGGGATGTT)
+
+<figure>
+    <img src="./pic/3.5.5DeBruijn3.png" alt="DeBruijn3">
+    <figcaption>Figure 3.5.5: DeBruijn3(TAATGCCATGGGATGTT) </figcaption>
+</figure>
+
+For each step:
+1. CompositionGraphk(Text): graph consisiting of |Text|−k+1 isolated edges
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edges: k-mer
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nodes: prefix and suffix of a k-mer
+
+2. DeBruijnk(Text): gluing nodes with the same label in CompositionGraphk(Text)
+
+STOP and Think: In the figure from the previous step, reproduced below, we identified ATG and TGC as overlapping 3-mers. In reality, since the genome is unknown, we don’t know whether this ATG is followed by TGC, TGG, or TGT. What would happen if we had identified ATG and TGG as overlapping 3-mers instead? Verify that the final result will be the same de Bruijn graph that we derived earlier.
+
+
+Given an arbitrary collection of k-mers Patterns (where some k-mers may appear multiple times), we define CompositionGraph(Patterns) as a graph with |Patterns| isolated edges. Every edge is labeled by a k-mer from Patterns, and the starting and ending nodes of an edge are labeled by the prefix and suffix of the k-mer labeling that edge. We then define DeBruijn(Patterns) by gluing identically labeled nodes in CompositionGraph(Patterns), which yields the following algorithm.
+
+
+__DeBruijn(Patterns)__
+
+dB ← graph in which every k-mer in Patterns is isolated edge between its prefix and suffix
+
+dB ← graph resulting from gluing all nodes in dB with identical labels
+
+return dB
+
+
+## Constructing de Bruijn graphs from k-mer composition
+
+another useful way to construct de Bruijn graphs without gluing
+
+1. Start from a collection of k-mers patterns
+
+<figure>
+    <img src="./pic/3.5.6kmerPattern.png" alt="k-mer pattern">
+    <figcaption>Figure 3.5.6: Given k-mers pattern: each edge corresponding to k-mer, and connecting nodes are prefix and suffix </figcaption>
+</figure>
+
+2. Unique 2-mers occuring as a prefix or suffix of 3-mer in the collection
+
+<figure>
+    <img src="./pic/3.5.7uniqueCollect.png" alt="unique k-1 mer nodes">
+    <figcaption>Figure 3.5.7: Unique nodes as a prefix or suffix of 3-mer in the collection </figcaption>
+</figure>
+
+3. Produce DeBruijn(Patterns)
+
+<figure>
+    <img src="./pic/3.5.8dBgraph.png" alt="De Bruijn graph">
+    <figcaption>Figure 3.5.7: For every k-mer pattern, connect its prefix node to its suffix by a directed edge </figcaption>
+</figure>
+
+### Code Challenge 3.5.1: DeBruijn Graph from k-mers Problem: Construct the de Bruijn graph from a set of k-mers.
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;__Input__: A collection of k-mers Patterns.
+
+&nbsp;&nbsp;&nbsp;&nbsp;__Output__: The adjacency list of the de Bruijn graph DeBruijn(Patterns)
+
+## De Bruijn graphs versus overlap graphs
+
+Two ways of solving String Reconsitute Problem
+1. Hamiltonian path: overlap path (visit every node once)
+2. Eulerian path: de Bruijn graph (visit every edge once)
+
+<figure>
+    <img src="./pic/3.5.9graphCompare.png" alt="hamilitonian v.s de Bruijn graph">
+    <figcaption>Figure 3.5.8: Top: Hamiltonian graph. Bottom: DeBruijn graph </figcaption>
+</figure>
+
+
+
+# 3.6 The Seven Bridges of Konigsberg
+
+# 3.7 Euler's Theorem
+
+## The theorem
+
+__1. Balanced__
+
+&nbsp;in(v) == out(v): indree and outdegree of a node v are equal -> balanced
+
+<figure>
+    <img src="./pic/3.6.1balanced.png" alt="balanced v.s unbalanced">
+    <figcaption>Figure 3.6.1: Left: Balanced graph; Right: Unbalanced graph </figcaption>
+</figure>
+
+STOP and Think: We now know that every Eulerian graph is balanced; is every balanced graph Eulerian?
+
+__2. Strongly Connected__: possible to reach any node from every other node
+
+Try to start from different vertex, and eventually find the Eulerian cycle
+
+<figure>
+    <img src="./pic/3.7.1cycle0.png" alt="first try">
+    <figcaption>Figure 3.7.1: first try: start from v0 </figcaption>
+</figure>
+
+
+<figure>
+    <img src="./pic/3.7.2cycle1.png" alt="second try">
+    <figcaption>Figure 3.7.2: second try: start from v1 </figcaption>
+</figure>
+
+<figure>
+    <img src="./pic/3.7.3cycle2.png" alt="Eulerian cycle">
+    <figcaption>Figure 3.7.2: Find Eulerian cycle, start from v3 </figcaption>
+</figure>
+
+
+# 3.8 From Euler's Theorem to an Algorithm for Finding Eulerian Cycles
+
+### Pseudocode for Eulerian cycle
+
+    EulerianCycle(Graph)
+        form a cycle Cycle by randomly walking in Graph (don't visit the same edge twice!)
+        while there are unexplored edges in Graph
+            select a node newStart in Cycle with still unexplored edges
+            form Cycle’ by traversing Cycle (starting at newStart) and then randomly walking
+            Cycle ← Cycle’
+        return Cycle
+
+### Code challenge 3.8.1: Solve the Eulerian Cycle Problem.
+     Input: The adjacency list of an Eulerian directed graph.
+     Output: An Eulerian cycle in this graph.
+
+
+
