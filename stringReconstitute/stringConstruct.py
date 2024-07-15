@@ -1,49 +1,84 @@
 from collections import defaultdict
 
-class Graph:
-    def __init__(self, num_vertices):
-        self.vertices = num_vertices
-        self.graph = defaultdict(list)
-        self.IN = [0] * self.vertices
-        self.verticesList = []
-    def addEdge(self, start, end):
-        self.graph[start].append(end)
-        self.verticesList.append(start)
-        self.verticesList.append(end)
+class Node:
+    def __init__(self, content):
+        self.content = content
+        self.INdegree = 0
+        self.OUTdegree = 0
 
-def deBruijn(Patterns, k):
-    deBruijnGraph = Graph(len(Patterns) * 2)
-    for pattern in Patterns:
+class Edge:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+class Graph:
+    def __init__(self):
+        self.nodes ={}
+        self.edges = []
+        # add for checking SCC
+        self.adjacent_list = {}
+
+    def add_node(self,content):
+        if content not in self.nodes:
+            self.nodes[content] = Node(content)
+            self.adjacent_list[content] = []
+
+    def add_edge(self, start_content, end_content):
+        if start_content in self.nodes and end_content in self.nodes:
+            start_node = self.nodes[start_content]
+            end_node = self.nodes[end_content]
+            self.edges.append(Edge(start_node, end_node))
+            start_node.OUTdegree += 1
+            end_node.INdegree += 1
+            self.adjacent_list[start_content].append(end_content)
+
+    # need to delete print function
+    def isBalanced(self):
+        for node in self.nodes.values():
+            if node.INdegree != node.OUTdegree:
+                ####
+                print(node.content)
+                ###
+                return False
+        return True
+
+    def is_strongly_connected(self):
+        # perform depth first search
+        # create iterator
+        iterator = iter(self.nodes)
+        start_node = next(iterator)
+        visited = {node: False for node in self.nodes}
+        
+        def DFS(vertex):
+            visited[vertex] = True
+            for neighbor in self.adjacent_list[vertex]:
+                if not visited[neighbor]:
+                    DFS(neighbor)
+        DFS(start_node)
+
+        if not all(visited.values()) == True:
+            return False
+        
+        # check if all nodes can reach the starting node (transpose graph)
+        transpose_adj_list = 
+
+    def print_graph(self):
+        for edge in self.edges:
+            print(f"{edge.start.content} -> {edge.end.content}")
+    
+
+def deBruijn(patterns):
+    dBGraph = Graph()
+    for pattern in patterns:
         prefix = pattern[: (k - 1)]
         suffix = pattern[1:]
-        deBruijnGraph.addEdge(prefix, suffix)
-    return deBruijnGraph
+        dBGraph.add_node(prefix)
+        dBGraph.add_node(suffix)
+        dBGraph.add_edge(prefix, suffix)
+    dBGraph.print_graph()
+    return dBGraph
 
-def DFSUtil(start_vertex, graph, visited):
-    visited[start_vertex] = True
-    for neighbor in graph[start_vertex]:
-        if visited[neighbor] == False:
-            DFSUtil(neighbor, graph, visited)
-    return 0
 
-def EulerianPath(dBGraph, verticesList):
-    # graph is strongly connected components
-    visited = {key: False for key in verticesList}
-    start_vertex = -1
-    for vertex in dBGraph:
-        if dBGraph[vertex]:
-            start_vertex = vertex
-            break
-    
-    # depth first search
-    DFSUtil(start_vertex, dBGraph, visited)
-    
-    # each vertex has same INdegree and OUTdegree (balanced)
-    return 0
-
-def stringConstruct(Patterns):
-    
-    return 0
 
 if __name__ == "__main__":
     k = 4
@@ -54,11 +89,9 @@ if __name__ == "__main__":
                 "GGCT",
                 "GCTT",
                 "TTAC"]
-
-    graph = {'CTT': ['TTA'], 'ACC': ['CCA'], 'TAC': ['ACC'], 'GGC': ['GCT'], 'GCT': ['CTT'], 'TTA': ['TAC']}
-    testGraph = deBruijn(patterns, k)
-    print(testGraph.graph)
-    vertices_list = testGraph.verticesList
-    EulerianPath(graph, vertices_list)
+    
+    dB = deBruijn(patterns)
+    print(dB.isBalanced())
+    print(dB.is_strongly_connected())
 
 # GGCTTACCA
