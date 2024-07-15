@@ -81,7 +81,7 @@ __The de Bruijn graph DeBruijnk(Text) is formed by gluing identically labeled no
 
 <font color = "red">I felt like I didn't do well for the challenge, can be re-checked</font>
 
-[deBruijnk challenge to generate adjacent matrix](./stringReconstitute/deBruijnk.py)
+[deBruijnk challenge to generate adjacent matrix](./deBruijn.py)
 
 STOP and Think: Consider the following questions.
 
@@ -272,6 +272,22 @@ Try to start from different vertex, and eventually find the Eulerian cycle
 ### Code challenge 3.8.1: Solve the Eulerian Cycle Problem.
      Input: The adjacency list of an Eulerian directed graph.
      Output: An Eulerian cycle in this graph.
+
+   [Eulerian Cycle](./eulerianCycle.py)
+
+
+__String Reconstitution Problem__ reduced to find Eulerian path in de Bruijn graph generated from reads. Pseudocode showed as follow:
+
+    StringReconstruction(Patterns)
+        dB <- deBruijn(Patterns)
+        path <- EulerianPath(dB)
+        Text <- PathToGenome(Path)
+        retrun Text
+
+### Code challenge 3.8.2: Solve the String Reconstruction Problem.
+    Input: An integer k followed by a list of k-mers Patterns.
+
+    Output: A string Text with k-mer composition equal to Patterns. (If multiple answers exist, you may return any one.)
 
 
 
