@@ -289,5 +289,26 @@ __String Reconstitution Problem__ reduced to find Eulerian path in de Bruijn gra
 
     Output: A string Text with k-mer composition equal to Patterns. (If multiple answers exist, you may return any one.)
 
+The code is for circular sequence, need to modify to be applicable to linear sequence [String Construct](./stringConstruct.py)
+
+## Construct universal strings
+
+def of universal strings
+
+construct a k-universal string for any value of k
+
+We should note that de Bruijn was interested in constructing k-universal circular strings. For example, 00011101 is a 3-universal circular string, as it contains each of the eight binary 3-mers (000, 001, 011, 111, 110, 101, 010, and 100) exactly once (see the figure below).
+
+k-Universal Circular String Problem: Find a k-universal circular string.
+
+Input: An integer k.
+Output: A k-universal circular string.
+
+<figure>
+    <img src="./pic/3.8.1_cicularUniveresalString.png" alt="circular 3-universal string">
+    <figcaption>Figure 3.8.1: The circular 3-universal string 00011101 contains each of the binary 3-mers exactly once. </figcaption>
+</figure>
+
+
 
 
