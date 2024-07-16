@@ -3,7 +3,7 @@ from collections import defaultdict
 def DFS(start_vertex, adjacent_list, visited):
     visited[start_vertex] = True
     for neighbor in adjacent_list[start_vertex]:
-        if visited[neighbor] == False:
+        if not visited[neighbor]:
             DFS(neighbor, adjacent_list, visited)
 
 class Node:
@@ -62,9 +62,12 @@ class Graph:
         iterator = iter(self.nodes)
         start_node = next(iterator)
         visited = {node: False for node in self.nodes}
+        print(start_node)
 
         DFS(start_node, self.adjacent_list, visited)
         print("SCC: " + str(all(visited.values())))
+        print(visited)
+        
         if not all(visited.values()):
             
             return False
@@ -117,9 +120,15 @@ def deBruijn(patterns, k):
         dBGraph.add_edge(prefix, suffix)
     ####
     dBGraph.print_graph()
+    print(dBGraph.adjacent_list)
     ###
     return dBGraph
 
+def reconstruct_string_from_path(path, k):
+    sequence = path[0]
+    for node in path[1:]:
+        sequence += node[-1]
+    return sequence
 
 
 if __name__ == "__main__":
@@ -133,11 +142,32 @@ if __name__ == "__main__":
     #             "TTAC",
     #             "TACG"]
     
-    # dB = deBruijn(patterns)
+    # dB = deBruijn(patterns, k)
     # print(dB.isBalanced())
     # print("if strongly connected: ")
     # print(dB.is_strongly_connected())
     # print(dB.find_eulerian_path())
+    
+    k = 4
+    patterns = [
+        "AAGC",
+        "AGCT",
+        "GCTG",
+        "CTGA",
+        "TGAA",
+        "GAAG"
+    ]
+
+    dB = deBruijn(patterns, k)
+    if dB.isBalanced() and dB.is_strongly_connected():
+        eulerian_path = dB.find_eulerian_path()
+        if eulerian_path:
+            result = reconstruct_string_from_path(eulerian_path, k)
+            print(f"Reconstructed string: {result}")
+        else:
+            print("No Eulerian path found.")
+    else:
+        print("Graph is not balanced or not strongly connected.")
 
     # patterns = []
     # with open("patterns.txt", "r") as file:
@@ -148,10 +178,11 @@ if __name__ == "__main__":
     # dB = deBruijn(patterns)
     # print(dB.isBalanced())
 
-    patterns = ["AAC", "ACG", "GAA", "GTT", "TCG"]
-    k = 3
-    dB = deBruijn(patterns, k)
-    print(dB.isBalanced())
+    # patterns = ["AAC", "ACG", "GAA", "GTT", "TCG"]
+    # ACGTTCGA
+    # k = 3
+    # dB = deBruijn(patterns, k)
+    # print(dB.isBalanced())
 
 
 # GGCTTACCA
