@@ -102,31 +102,48 @@ def construct_string_from(paired_dB_graph):
     DFSUtil(start_node, paired_dB_graph.adjacent_list, visited, path)
     path.append(start_node)
     path.reverse()
-    print(visited)
 
-    print(path)
-    return 0
+    return path
 
 def DFSUtil(start_vertex, adjacnet_list, visited, path):
     visited[start_vertex] = True
     for neighbor in adjacnet_list[start_vertex]:
-        if visited[neighbor] == False:
+        yet_visited = None
+        if adjacnet_list[neighbor]:
+            for node in adjacnet_list[neighbor]:
+                if visited[node] == False:
+                    yet_visited = node
+        if visited[neighbor] == False or yet_visited != None:
             DFSUtil(neighbor, adjacnet_list, visited, path)
             path.append(neighbor)
 
+def spell_from_path(path, k):
+    return 0
+
 
 if __name__ == "__main__":
+    # test code for coding
     text = "TAATGCCATGGGATGTT"
     k = 3
     d = 1
     paired_reads_ = paired_reads(text, k, d)
-    top = "TAATGCCATGGGA"
-    bottom =  "GCCATGGGATGTT"
-    paired_ = ('TAA', 'GCC')
-    print(paired_reads_)
-    
     paired_dB_graph = construct_paired_dB(paired_reads_)
-    construct_string_from(paired_dB_graph)
+    path = construct_string_from(paired_dB_graph)
+    print(path)
+
+    "TAATGCCATGGGA TGTT"
+
+    # reads_1 = ["GAGA|TTGA", "TCGT|GATG", "CGTG|ATGT", "TGGT|TGAG", "GTGA|TGTT", "GTGG|GTGA", "TGAG|GTTG", "GGTC|GAGA", "GTCG|AGAT"]
+    # paired_reads_1 = []
+    # for read in reads_1:
+    #     start, end = read.split("|")
+    #     paired_reads_1.append((start, end))
+    # paired_dB_graph_1 = construct_paired_dB(paired_reads_1)
+    # construct_string_from(paired_dB_graph_1)
+    
+    "GTGGTCGTGAGA TGTTGA" "(4 + 2, k + d)"
+    
+
 
 
     
