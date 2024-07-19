@@ -63,28 +63,9 @@ def construct_string_from(paired_dB_graph):
 
     # conduct depth first search
     visited = {key: False for key in paired_dB_graph.adjacent_list.keys()}
-    path = []
-    dfs_iterate(start_node, paired_dB_graph.adjacent_list, visited, path)
-    path.append(start_node)
-
+    path = [start_node]
+    DFSUtil(start_node, paired_dB_graph.adjacent_list, visited, path)
     return path
-def dfs_iterate(start_vertex, adjacent_list, visited, path):
-    stack = [start_vertex]
-    while stack:
-        vertex = stack.pop()
-        if not visited[vertex]:
-            visited[vertex] = True
-            path.append(vertex)
-            print(path)
-            for neighbor in adjacent_list[vertex]:
-                yet_visited = None
-                if adjacent_list[neighbor]:
-                    for node in adjacent_list[neighbor]:
-                        if not visited[node]:
-                            yet_visited = node
-                if not visited[neighbor] or yet_visited is not None:
-                    stack.append(neighbor)
-
 
 def DFSUtil(start_vertex, adjacnet_list, visited, path):
     visited[start_vertex] = True
@@ -97,6 +78,18 @@ def DFSUtil(start_vertex, adjacnet_list, visited, path):
         if not visited[neighbor] or yet_visited is not None:
             DFSUtil(neighbor, adjacnet_list, visited, path)
             path.append(neighbor)
+
+def dfs_interate(start_vertex, adjacent_list, path, visited):
+    # initiate stack with start_vertex
+    # pop last vertex in the stack as current
+    # find the vertices next to current as next
+    # if the vertices are not visited, append into stack
+    # find the next vertex from start_vertex
+    # if next vertex is not visited and 
+
+    # find the longest path
+    return 0
+
 
 def spell_from_path(path, k, d):
     # initiate
@@ -117,9 +110,6 @@ def spell_from_path(path, k, d):
 def check_ans(result, ans):
     if result == ans:
         print("correct")
-
-
-
 
 if __name__ == "__main__":
     # test code for coding
