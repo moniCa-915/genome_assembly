@@ -1,0 +1,5 @@
+Input: reads (several lines)
+1. Generate paired_reads from reads
+2. Generate paired de Bruijn graph (paired_dB_graph) from paired_reads
+3. Construct string from paired_dB_graph
+4. Spell the path into text
