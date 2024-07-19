@@ -150,4 +150,5 @@ if __name__ == "__main__":
         for line in file.readlines():
             read = line.strip()
             reads.append(read)
-    print(reads)
+    k = 12
+    paired_reads(text, k , d)
