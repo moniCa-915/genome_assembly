@@ -1,0 +1,40 @@
+eulerian_trail(paired_dB_graph)
+
+1. initiate **final_path** list
+2. get adjacent_list from paired_dB_graph
+3. get start_node which is a node with IN == 0
+4. append start_node into final_path
+
+Enter loop to find the trail (contig)
+1. initiate trail list to record passed nodes
+2. initiate current_node with start_node
+
+    Enter inner while loop
+    1. (break point) check if current_node in adjacent_list
+    1. find the next node linked to current_node, pop it and store it as next_node
+    2. check if current_node has other linked nodes, if not, delete it from adjacent list
+    3. record next_node: append next_node into trail
+    4. (break point)check if next_node equal to start_node, if so, that's a loop, break inner while loop
+    5. re-define current_node with next_node, repeat
+
+Back to loop:
+    condition: 
+        a. current_node not in adjacent_list (reach end point)
+        b. find a loop: repeated nodes
+3. get the start_index of start in final_path list
+4. update final_path, combine the following components
+    a. final_path[0: start_index + 1]
+    b. trail
+    c. final_path[start_index + 1:]
+
+5. (break point)if nothing left in adjacent_list: break, else go to step 6
+6. initate boolean found_new_start = False
+7. for loop 
+    go thru each vertex in final_path, 
+    (break for loop) if find a vertex in adjacent_list, define start_node with this vertex, and change found_new_start as True
+    (end): if nothing is found
+8. (break point) if no found_new_start, else start while loop with updated start_node
+
+
+
+

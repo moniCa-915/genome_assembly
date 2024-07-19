@@ -39,41 +39,23 @@ def eulerian_trail(m,v):
     while(True):
         trail = []
         previous = start
-        print("previous")
-        print(previous)
         while(True):
             
             if(previous not in nemap):
                 break
-            # get next vertex
             next = nemap[previous].pop()
-            # if there is no other next vertex -> delete current node
             if(len(nemap[previous]) == 0):
                 nemap.pop(previous,None)
             trail.append(next)
-            # if form a loop
             if(next == start):
-                print("line54: loop")
                 break
             previous = next
         # completed one trail
-        print("line 59")
         print(trail)
-        print("start:")
-        print(start)
         index = result_trail.index(start)
-        ####
-        print("part 1/ 3")
-        print(result_trail[0: index + 1])
-        print("part 2/3")
-        print(trail)
-        print("part 3/3")
-        print(result_trail[index+1:len(result_trail)])
-        ###
         result_trail = result_trail[0:index+1] + trail + result_trail[index+1:len(result_trail)]
         # choose new start
         if(len(nemap)==0):
-          print("no new start")
           break
         found_new_start = False
         for n in result_trail:
@@ -110,9 +92,7 @@ def test_assembly_debruijn(t,k):
     G = debruijnize(reads)
     v = visualize_debruijn(G)
     nemap = make_node_edge_map(G[1])
-    print("line 100:")
     print(G)
-    print("line 102")
     print(v)
     start = next(iter(G[2])) if (len(G[2]) > 0) else next(iter(G[0]))
     trail = eulerian_trail(nemap,start)
@@ -123,9 +103,11 @@ if __name__ == "__main__":
     text1 = "ATCGTTGCGCGACCG"
     text2 = "TAATGCCATGGGATGTT"
 
-    reads = build_k_mer(text1,4)
+    reads = build_k_mer(text2,4)
+    print(reads)
     
     G = debruijnize(reads)
+    print(G)
 
     m = make_node_edge_map(G[1])
     print(m)

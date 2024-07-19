@@ -52,8 +52,18 @@ def construct_paired_dB(paired_reads): # construct paired de Bruijn graph
     return paired_dB
 
 def construct_string_from(paired_dB_graph):
-    start_node = None
+    # 1. initiate final_path
+    final_path = []
+    # 2. get adjacent list
+    adjacent_list = paired_dB_graph.adjacent_list
+    end_vertex = None
+    for key in adjacent_list.keys():
+        if not adjacent_list[key]:
+            end_vertex = key
+    adjacent_list.pop(end_vertex, None)
 
+    # get start node
+    start_node = None
     for node in paired_dB_graph.adjacent_list.keys():
         if paired_dB_graph.nodes[node].OUT > 0 and paired_dB_graph.nodes[node].IN == 0:
             start_node = node
@@ -61,11 +71,26 @@ def construct_string_from(paired_dB_graph):
     if start_node is None:
         return None
 
+    # 3. append start_node to final path
+    final_path.append(start_node)
+
+    # Enter loop to find the trail (contig)
+    while True:
+        # record passed nodes
+        trail = []
+        current = start_node
+        while True:
+            next = None
+            if adjacent_list[current]:
+                next = adjacent_list[current].pop()
+            
+
+
+    #!! old code
     # conduct depth first search
-    visited = {key: False for key in paired_dB_graph.adjacent_list.keys()}
-    path = [start_node]
-    DFSUtil(start_node, paired_dB_graph.adjacent_list, visited, path)
-    return path
+    # visited = {key: False for key in paired_dB_graph.adjacent_list.keys()}
+    # path = [start_node]
+    # DFSUtil(start_node, paired_dB_graph.adjacent_list, visited, path)
 
 def DFSUtil(start_vertex, adjacnet_list, visited, path):
     visited[start_vertex] = True
@@ -119,11 +144,15 @@ if __name__ == "__main__":
     paired_reads_ = paired_reads(text, k, d)
     paired_dB_graph = construct_paired_dB(paired_reads_)
     print(paired_dB_graph.adjacent_list)
-    path = construct_string_from(paired_dB_graph)
-    print(path)
-    seq = spell_from_path(path, k, d)
-    print(seq)
-    check_ans(seq, text)
+
+
+    construct_string_from(paired_dB_graph)
+
+    
+    # print(path)
+    # seq = spell_from_path(path, k, d)
+    # print(seq)
+    # check_ans(seq, text)
 
     # Example_1
 
