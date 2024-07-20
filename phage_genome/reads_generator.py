@@ -10,7 +10,7 @@ if __name__ == "__main__":
         sequence = file.read()
 
     read_length = 100
-    overlap_length = 12
+    overlap_length = 99
     reads = generator(sequence, read_length, overlap_length)
     
     # output reads

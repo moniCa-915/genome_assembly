@@ -1,3 +1,5 @@
+import sys
+
 class Node:
     def __init__(self, read_start, read_end):
         self.content = read_start + "|" + read_end
@@ -21,12 +23,13 @@ class Graph:
             self.nodes[suffix].IN += 1
             self.nodes[prefix].OUT += 1
 
-def paired_reads(text, k , d): # generate paired composition
+def paired_reads(reads, k , d): # generate paired composition
     paired_dB = []
-    for i in range(len(text) - d - 2 * k + 1):
-        first_k_mer = text[i: i + k]
-        last_k_mer = text[i + k + d: i + (2 * k) + d]
-        paired_dB.append((first_k_mer, last_k_mer))
+    for text in reads:
+        for i in range(len(text) - d - 2 * k + 1):
+            first_k_mer = text[i: i + k]
+            last_k_mer = text[i + k + d: i + (2 * k) + d]
+            paired_dB.append((first_k_mer, last_k_mer))
     return paired_dB
 
 def construct_paired_dB(paired_reads): # construct paired de Bruijn graph
@@ -145,10 +148,43 @@ def check_ans(result, ans):
         print("correct")
 
 if __name__ == "__main__":
+    # driver code
     reads = []
-    with open("phiX174.txt", "r") as file:
-        for line in file.readlines():
-            read = line.strip()
-            reads.append(read)
-    k = 12
-    paired_reads(text, k , d)
+    lines = sys.stdin.readlines()
+    for line in lines:
+        reads.append(line.strip())
+    print(reads)
+
+    k = 1
+
+    # k = 12
+    d = len(reads[0]) - (2 * k)
+
+    paired_reads_list = paired_reads(reads, k, d)
+    paired_dB_graph = construct_paired_dB(paired_reads_list)
+    path = construct_string_from(paired_dB_graph)
+    print(path)
+    # seq = spell_from_path(path, k, d)
+    # print(seq)
+
+    # reads = []
+    # with open("reads.txt", "r") as file:
+    #     for line in file.readlines():
+    #         read = line.strip()
+    #         reads.append(read)
+    # k = 12
+    # d = len(reads[0]) - (2 * k)
+
+    # paired_reads_list = paired_reads(reads, k, d)
+    # paired_dB_graph = construct_paired_dB(paired_reads_list)
+    # path = construct_string_from(paired_dB_graph)
+    # seq = spell_from_path(path, k, d)
+    
+    # with open("phiX174.txt", "r") as ans:
+    #     ans = ans.readline().strip()
+    #     check_ans(seq, ans)
+
+    
+
+    
+
