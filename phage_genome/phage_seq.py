@@ -1,3 +1,5 @@
+# python3
+
 import sys
 
 class Node:
@@ -127,7 +129,7 @@ def construct_string_from(paired_dB_graph):
             break
     return final_path
 
-def spell_from_path(path, k, d):
+def spell_from_path(path, k, d): # if input circular sequence (text), output will start from text[overlap-1:]
     # initiate
     first, end = path[0].split("|")
     path_to_string = [first]
@@ -138,8 +140,8 @@ def spell_from_path(path, k, d):
         path_to_string.append(start[-1])
         path_to_string_end.append(end[-1])
 
-    for end in path_to_string_end[-(k + d):]:
-        path_to_string.append(end)
+    # for end in path_to_string_end[-(k + d):]:
+    #     path_to_string.append(end)
 
     return "".join(path_to_string)
     
@@ -147,44 +149,83 @@ def check_ans(result, ans):
     if result == ans:
         print("correct")
 
+#### code for testing
+def circular_generator(genome, reads_len, overlap_len):
+    reads = []
+    for i in range(len(genome) - overlap_len):
+        read = genome[i: i + reads_len]
+        reads.append(read)
+    for i in range(len(genome) - overlap_len + 1, len(genome)):
+        read = genome[i:]
+        lack_length = reads_len - len(read)
+        read += genome[:lack_length]
+        reads.append(read)
+    return reads
+
+
+
 if __name__ == "__main__":
     # driver code
-    reads = []
-    lines = sys.stdin.readlines()
-    for line in lines:
-        reads.append(line.strip())
-    print(reads)
-
-    k = 1
-
-    # k = 12
-    d = len(reads[0]) - (2 * k)
-
-    paired_reads_list = paired_reads(reads, k, d)
-    paired_dB_graph = construct_paired_dB(paired_reads_list)
-    path = construct_string_from(paired_dB_graph)
-    print(path)
-    # seq = spell_from_path(path, k, d)
-    # print(seq)
-
     # reads = []
-    # with open("reads.txt", "r") as file:
-    #     for line in file.readlines():
-    #         read = line.strip()
-    #         reads.append(read)
+    # lines = sys.stdin.readlines()
+    # for line in lines:
+    #     reads.append(line.strip())
+
     # k = 12
     # d = len(reads[0]) - (2 * k)
 
     # paired_reads_list = paired_reads(reads, k, d)
     # paired_dB_graph = construct_paired_dB(paired_reads_list)
     # path = construct_string_from(paired_dB_graph)
-    # seq = spell_from_path(path, k, d)
-    
-    # with open("phiX174.txt", "r") as ans:
-    #     ans = ans.readline().strip()
-    #     check_ans(seq, ans)
 
+    # seq = spell_from_path(path, k, d)
+    # print(seq)
+
+    #test code: short sequence
+
+    text = "ACGTTCGA"
+    reads = circular_generator(text, 5, 4)
+    print(reads)
+
+    # k = 2
+    # d = len(reads[0]) - (2 * k)
+
+    # paired_reads_list = paired_reads(reads, k, d)
+
+    # paired_dB_graph = construct_paired_dB(paired_reads_list)
+    # print(paired_dB_graph.adjacent_list)
+    # path = construct_string_from(paired_dB_graph)
+    # print(path)
+
+    # seq = spell_from_path(path, k, d)
+    # print(seq)
+##############
+
+    # test code: known genome
+    # reads = []
+
+    # with open("phiX174.txt", "r") as ans:
+    #     genome_seq = ans.readline().strip()
+    #     reads = circular_generator(genome_seq, 100, 80)
+
+    # k = 12
+    # d = len(reads[0]) - (2 * k)
+
+    # paired_reads_list = paired_reads(reads, k, d)
+
+    # paired_dB_graph = construct_paired_dB(paired_reads_list)
+    # # print(paired_dB_graph.adjacent_list)
+    # path = construct_string_from(paired_dB_graph)
+    # # print(path)
+
+    # seq = spell_from_path(path, k, d)
+    # print(seq)
+    # print(len("GCCGACGTTTTGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCA")) # overlap = 90, length = 89
+    # print(len("GTTACTGTAGCCGACGTTTTGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCA")) # overlap = 99, length = 98
+    # print(len("TGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCA")) # overlap = 80, length - 79
     
+
+
 
     
 

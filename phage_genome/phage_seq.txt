@@ -3,3 +3,9 @@ Input: reads (several lines)
 2. Generate paired de Bruijn graph (paired_dB_graph) from paired_reads
 3. Construct string from paired_dB_graph
 4. Spell the path into text
+
+Circular plasmids
+What the reads will be
+    if linked everything together -> circular -> find a start, end will be the vertex before start
+
+Circular plasmid -> form eulerian cycle
