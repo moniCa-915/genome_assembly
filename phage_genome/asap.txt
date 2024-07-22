@@ -1,0 +1,2 @@
+create prefix trie
+1. add first string into prefix trie
