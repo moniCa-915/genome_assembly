@@ -7,16 +7,13 @@ def linear_generator(genome, reads_len, overlap_len):
 
 def circular_generator(genome, reads_len, overlap_len):
     reads = []
-    for i in range(len(genome) - overlap_len):
+    for i in range(0, len(genome), overlap_len):
         read = genome[i: i + reads_len]
-        reads.append(read)
-    for i in range(len(genome) - overlap_len + 1, len(genome)):
-        read = genome[i:]
-        lack_length = reads_len - len(read)
-        read += genome[:lack_length]
+        if len(read) < reads_len:
+            lack_length = reads_len - len(read)
+            read += genome[:lack_length]
         reads.append(read)
     return reads
-
 
 if __name__ == "__main__":
     # with open("phiX174.txt", "r") as file:
@@ -38,8 +35,8 @@ if __name__ == "__main__":
         sequence = file.read()
 
     read_length = 100
-    overlap_length = 80
-    reads = linear_generator(sequence, read_length, overlap_length)
+    overlap_length = 12 # change from 80 to 12
+    reads = circular_generator(sequence, read_length, overlap_length)
     
     # output reads
     with open("reads_from_plasmid.txt", "w") as output:

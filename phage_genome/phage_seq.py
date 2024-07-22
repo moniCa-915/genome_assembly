@@ -59,13 +59,13 @@ def construct_paired_dB(paired_reads): # construct paired de Bruijn graph
 def construct_string_from(paired_dB_graph):
     # 1. initiate final_path
     final_path = []
-    # 2. get adjacent list
     adjacent_list = paired_dB_graph.adjacent_list
-    end_vertex = None
+    end_vertices = []
     for key in adjacent_list.keys():
         if not adjacent_list[key]:
-            end_vertex = key
-    adjacent_list.pop(end_vertex, None)
+            end_vertices.append(key)
+    for end_vertex in end_vertices:
+        adjacent_list.pop(end_vertex, None)
 
     # 3. get start node
     start_node = None
@@ -75,10 +75,8 @@ def construct_string_from(paired_dB_graph):
             break
     if start_node is None:
         return None
-
     # 4. append start_node to final path
     final_path.append(start_node)
-
     # Enter loop to find the trail (contig)
     while True:
         # while_loop_1. initiate trail list to record passed nodes
@@ -162,7 +160,15 @@ def circular_generator(genome, reads_len, overlap_len):
         reads.append(read)
     return reads
 
-
+def new_circular_generator(genome, reads_len, overlap_len):
+    reads = []
+    for i in range(0, len(genome), overlap_len):
+        read = genome[i: i + reads_len]
+        if len(read) < reads_len:
+            lack_length = reads_len - len(read)
+            read += genome[:lack_length + 1]
+        reads.append(read)
+    return reads
 
 if __name__ == "__main__":
     # driver code
@@ -183,9 +189,9 @@ if __name__ == "__main__":
 
     #test code: short sequence
 
-    text = "ACGTTCGA"
-    reads = circular_generator(text, 5, 4)
-    print(reads)
+    # text = "ACGTTCGA"
+    # reads = sorted(circular_generator(text, 5, 4))
+    # print(reads)
 
     # k = 2
     # d = len(reads[0]) - (2 * k)
@@ -202,27 +208,29 @@ if __name__ == "__main__":
 ##############
 
     # test code: known genome
-    # reads = []
+    reads = []
 
-    # with open("phiX174.txt", "r") as ans:
-    #     genome_seq = ans.readline().strip()
-    #     reads = circular_generator(genome_seq, 100, 80)
+    with open("small_seq.txt", "r") as ans:
+        genome_seq = ans.readline().strip()
+        reads = new_circular_generator(genome_seq, 100, 99)
 
-    # k = 12
-    # d = len(reads[0]) - (2 * k)
+    k = 12
+    d = len(reads[0]) - (2 * k)
 
-    # paired_reads_list = paired_reads(reads, k, d)
+    paired_reads_list = paired_reads(reads, k, d)
 
-    # paired_dB_graph = construct_paired_dB(paired_reads_list)
-    # # print(paired_dB_graph.adjacent_list)
-    # path = construct_string_from(paired_dB_graph)
-    # # print(path)
+    paired_dB_graph = construct_paired_dB(paired_reads_list)
+    print(paired_dB_graph.adjacent_list)
 
-    # seq = spell_from_path(path, k, d)
-    # print(seq)
-    # print(len("GCCGACGTTTTGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCA")) # overlap = 90, length = 89
-    # print(len("GTTACTGTAGCCGACGTTTTGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCA")) # overlap = 99, length = 98
-    # print(len("TGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCA")) # overlap = 80, length - 79
+    path = construct_string_from(paired_dB_graph)
+    print(path)
+
+    seq = spell_from_path(path, k, d)
+    print(seq)
+
+
+
+
     
 
 

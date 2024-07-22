@@ -153,6 +153,7 @@ class Assembling_challenge001:
         current_Index = 0
         genome = reads[0]
         firstRead = reads[current_Index]
+        # print("reads[0]: " + genome)
         while True:
             current_Read = reads[current_Index]
             if 1 == len(reads):
@@ -160,6 +161,8 @@ class Assembling_challenge001:
             del reads[current_Index]
             current_Index, overlap = self.findLongestOverlap(current_Read + '$', reads)
             genome += reads[current_Index][overlap:]
+            # print("overlap: " + reads[current_Index][overlap:])
+            # print("combined genome: " + genome)
         current_Index, overlap = self.findLongestOverlap(reads[0] + '$', [firstRead])
         if overlap > 0:
             return genome[:-overlap]
