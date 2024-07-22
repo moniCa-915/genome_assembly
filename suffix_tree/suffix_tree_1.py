@@ -20,13 +20,13 @@ class SuffixTree:
         i = 0
         while i < len(suffix):
             if suffix[i] in current.children:
-                print("enter first if")
+                print(suffix + " enter first if")
                 child = current.children[suffix[i]]
                 edge_label = self.s[child.index:child.index + len(suffix)]
-                j = 0
+                j = 0 # track char of suffix
                 while j < len(edge_label) and i + j < len(suffix) and suffix[i + j] == edge_label[j]:
                     j += 1
-                if j == len(edge_label):
+                if j == len(edge_label): # reach end of label, child node becomes current node
                     current = child
                     i += j
                 else:
