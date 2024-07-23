@@ -1,17 +1,20 @@
-nucleotides = ["A", "T", "C", "G"]
+nucleotides = ["A", "C", "G", "T"]
 
 class Node: # chain_val, and interval (string ID range)
     def __init__(self, chain_val = -1, interval = []):
         self.chain_val = chain_val
         self.interval = interval
+        self.children = {}
 
 class PrefixTrie:
     def __init__(self, reads):
         self.root = Node()
-    def add_reads(self, read):
+    def add_read(self, index, read):
         current_node = self.root
         
-
+    def add_reads(self, reads):
+        for index, read in enumerate(reads):
+            self.add_read(index, read)
 
 
 
