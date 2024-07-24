@@ -1,0 +1,6 @@
+def build_suffix_tree(text)
+    create Tree with root
+
+    # initiate remainder and active point
+    remainder = 0
+

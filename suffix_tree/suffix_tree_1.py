@@ -1,61 +1,74 @@
 class Node:
     def __init__(self):
-        self.children = {}
-        self.index = -1
+        self.children = [None] * 256 # ASCII
+        # suffix link
+        self.suffix_link = None
+        # start index of the substring (represent edge (start) leading to this node)
+        self.start = 0
+        # end index of the substring (represent edge (start) leading to this node)
+        self.end  = [-1] # list to faciliate updates
+        # index of the suffix (leaf has non-negative value)
+        self.suffix_index = -1
 
 class SuffixTree:
-    def __init__(self, s):
+    def __init__(self):
         self.root = Node()
-        self.s = s
-        self.build_suffix_tree()
 
-    def build_suffix_tree(self):
-        for i in range(len(self.s)):
-            print("processing sufiix")
-            print(self.s[i:], i)
-            self._insert_suffix(self.s[i:], i)
+    # function to create new node
+    def create_node(self, start, end): # start: start index of substring, end: end index of substring
+        node = Node()
+        node.suffix_link = self.root
+        node.start = start
+        node.end = end
+        return node
+    
+    # get the edge length
+    def edge_length(self, node):
+        return node.end[0] - node.start + 1
+    
+    def extend_suffix_tree(self, index_of_char, remainder, active_node, active_edge, active_length):
+        leaf_end = index_of_char
+        remainder += 1
 
-    def _insert_suffix(self, suffix, index):
-        current = self.root
-        i = 0
-        while i < len(suffix):
-            if suffix[i] in current.children:
-                print(suffix + " enter first if")
-                child = current.children[suffix[i]]
-                edge_label = self.s[child.index:child.index + len(suffix)]
-                j = 0 # track char of suffix
-                while j < len(edge_label) and i + j < len(suffix) and suffix[i + j] == edge_label[j]:
-                    j += 1
-                if j == len(edge_label): # reach end of label, child node becomes current node
-                    current = child
-                    i += j
-                else:
-                    # Split edge
-                    new_node = Node()
-                    new_node.children[edge_label[j]] = child
-                    new_node.index = child.index + j
-                    current.children[suffix[i]] = new_node
-                    child.index += j
-                    # Add the remaining suffix part
-                    new_leaf = Node()
-                    new_leaf.index = index
-                    new_node.children[suffix[i + j]] = new_leaf
-                    return
-            else:
-                print("enter first else")
-                new_leaf = Node()
-                new_leaf.index = index
-                current.children[suffix[i]] = new_leaf
-                return
+        while remainder > 0:
+            # set up active edge
+            
+            
+            if not active_node.children[active_edge]:
+                new_node = self.create_node(index_of_char, [leaf_end])
+                active_node.children[active_edge] = new_node
+                remainder -= 1
+                break
 
-    def print_tree(self, node=None, indent=""):
-        if node is None:
-            node = self.root
-        for k, v in node.children.items():
-            print(f"{indent}{k}: {self.s[v.index:]}")
-            self.print_tree(v, indent + "  ")
+        #debug code
 
-# Example usage
-s = "banana$"
-st = SuffixTree(s)
-st.print_tree()
+
+        ###
+
+        
+        return 0
+
+    def build_suffix_tree(self, text):
+        
+        
+        
+
+        # remainder
+        remainder = 0
+
+        # active point
+        active_node = self.root
+        active_edge = -1
+        active_length = 0
+
+        for i in range(len(text)):
+            self.extend_suffix_tree(i, remainder, active_node, active_edge, active_length)
+
+
+
+
+if __name__ == "__main__":
+    text = "bananasna$"
+    debug_text = "a$"
+    suffix_tree = SuffixTree()
+    suffix_tree.build_suffix_tree(debug_text)
