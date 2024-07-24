@@ -1,3 +1,4 @@
+# simulate growth of leaf only
 class Node:
     def __init__(self):
         self.edge = [None] * 256 # ASCII
@@ -59,9 +60,9 @@ class SuffixTree:
             if edge is not None:
                 print(text[edge.start: edge.end[-1] + 1])
 
-
 if __name__ == "__main__":
-    text = "bananasna$"
-    building_text = "ban"
+    leaf_text = "abn$"
     suffix_tree = SuffixTree()
-    suffix_tree.build_suffix_tree(building_text)
+    suffix_tree.build_suffix_tree(leaf_text)
+
+

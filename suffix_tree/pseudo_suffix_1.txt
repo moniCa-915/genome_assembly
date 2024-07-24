@@ -1,6 +1,24 @@
+# class Node
+
+
+
 def build_suffix_tree(text)
     create Tree with root
 
-    # initiate remainder and active point
-    remainder = 0
+    # initiate remainder
+    remainder = 0 # increment at start of the step; decrement when step is finished
+    # active point
+    active_node = root
+    active_edge = null
+    active_length = 0
+
+    # read thru each character of text
+    for i in range(len(text)):
+        remainder += 1
+
+        # text[i] is not next character after active point
+            # ex. the first character or new character
+        while remainder 
+
+
 
