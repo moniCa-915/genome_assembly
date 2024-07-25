@@ -1,24 +1,45 @@
 # class Node
 
 
+# class SuffixTree
+    def build_suffix_tree(text)
+        # prepare
+        1. convert text into list of text
+        2. remainder = 0 # increment at start of the step; decrement when step is finished
+        3. active point
+            active_node = root
+            active_edge = null
+            active_length = 0
+        4. text_counter (i) = -1 # 0-based index
 
-def build_suffix_tree(text)
-    create Tree with root
+        go thru each character of text: (while i < len(text) - 1)
+            increment text_counter (i)
+            increment remainder
+            last_internal_node = None
+            
+            1. existing cahacter:
+            2. new character: create_new_leaf (and internal_node)
 
-    # initiate remainder
-    remainder = 0 # increment at start of the step; decrement when step is finished
-    # active point
-    active_node = root
-    active_edge = null
-    active_length = 0
+                a. active_length > 0 (create internal node)
+                    check if there is last_internal_node
+                    a-1: create internal_node
+                    a-2: update existing_leaf.start
+                    a-3: connct internal_node to existing_leaf (active_edge point at)
+                    a-4: conntect active_node to internal_node
+                    a-5: if last_internal_node != None -> last_internal_node.suffix_link = internal_node
+                    a-6: last_internal_node = internal_node
 
-    # read thru each character of text
-    for i in range(len(text)):
-        remainder += 1
+                b. active_length == 0 (create new leaf)
+                    b-1. create new_leaf attach to root
+                    b-2. decrement remainder
 
-        # text[i] is not next character after active point
-            # ex. the first character or new character
-        while remainder 
+        # read thru each character of text
+        for i in range(len(text)):
+            remainder += 1
+
+            # text[i] is not next character after active point
+                # ex. the first character or new character
+            while remainder 
 
 
 

@@ -21,7 +21,7 @@ class Edge:
 class SuffixTree:
     def __init__(self):
         self.root = Node()
-        self.leaves = {}
+        self.leaves = {} # could be deleted
 
 
     def build_suffix_tree(self, text):
@@ -55,8 +55,7 @@ class SuffixTree:
             # condition: string_list[i] is not char after active_point -> add leaf or create internal_node
             else:
                 while remainder > 0:
-                    if active_length == 0:
-                        # create new leaf
+                    if active_length == 0: # create new leaf
                         new_leaf = Node()
                         new_leaf.start = i
                         new_leaf.end.append(i)
@@ -100,22 +99,13 @@ class SuffixTree:
                         investigate = active_node.edge[existing_leaf_char_index]
                         print("start index" + str(investigate.start), " end index: " + str(investigate.end[-1]) + " suffix index: " + str(investigate.suffix_index))
                         print("\n")
-                        # update remainder and active node
+                        # update remainder
                         remainder -= 1
-                        # active_node = no change
+                        # update active edge and active length, active_node = no change
                         active_length -= 1
-
-                        # print("active node")
-                        # for index, edge in enumerate(active_node.edge):
-                        #     if edge is not None:
-                        #         print(index)
-                        # print("before change: " + str(active_edge.suffix_index))
                         active_edge_char_index = ord(text[i - active_length]) - ord(" ")
                         active_edge = active_node.edge[active_edge_char_index]
 
-
-
-        
             # debug code
             print("\n")
             print("step: " + str(i))
@@ -123,9 +113,9 @@ class SuffixTree:
             for index, edge in enumerate(self.root.edge):
                 if edge is not None:
                     print(str(index) + ": " + text[edge.start])
-            for leaf in self.leaves:
-                leaf_node = self.leaves[leaf]
-                print("Edge: " + text[leaf_node.start: leaf_node.end[-1] + 1] + " to leaf: " + str(leaf_node.suffix_index))
+            for child_node in self.root.edge:
+                if child_node != None:
+                    print("Edge: " + text[child_node.start: child_node.end[-1] + 1] + " to leaf: " + str(child_node.suffix_index))
                 
 
 
