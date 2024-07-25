@@ -45,8 +45,15 @@ class SuffixTree:
                 node.end.append(i)
 
             char_index = ord(string_list[i]) - ord(' ')
-            # condition: add leaf
-            if active_node.edge[char_index] == None:
+
+            # condition: if string_list[i] == next char after active point
+            if active_node.edge[char_index] != None:
+                if active_length == 0:
+                    active_edge = active_node.edge[char_index]
+                active_length += 1
+            
+            # condition: string_list[i] is not char after active_point -> add leaf or create internal_node
+            else:
                 while remainder > 0:
                     if active_length == 0:
                         # create new leaf
@@ -54,39 +61,67 @@ class SuffixTree:
                         new_leaf.start = i
                         new_leaf.end.append(i)
                         new_leaf.suffix_index = i
-                        # create new edge
-                        new_edge = Edge(new_leaf.start, new_leaf.end[-1])
-                        new_edge.From = active_node
-                        new_edge.To = new_leaf
-                        new_edge.char = string_list[i]
                         # link to active_node
                         self.leaves[i] = new_leaf
                         active_node.edge[char_index] = new_leaf
                         remainder -= 1
-                    else: # active_length != 0
-                        internal_node = Node()
-                        # link existing leaf to internal node
+                    else: # active_length != 0 -> create internal_node
+                        # debug code
+                        print("processing at " + str(i - active_length))
+                        print("active_edge is " + text[active_edge.start])
+                        print("active_length: " + str(active_length))
+                        print("active_node edge: ")
+                        for index, edge in enumerate(self.root.edge):
+                            if edge is not None:
+                                print(str(index) + ": " +text[edge.start])
+
                         existing_leaf = active_edge
-                        
-                        # create new leaf and link to internal node
-                        # replace exisiting leaf with internal node
-            # condition: if string_list[i] == next char after active point
-            else:
-                if active_length == 0:
-                    active_edge = active_node.edge[char_index]
-                active_length += 1
-                print(active_length)
-                print(remainder)
-                print("active_edge: " + text[active_edge.start])
+
+                        internal_node = Node()
+                        internal_node.start = existing_leaf.start
+                        internal_node.end.append(i - active_length)
+                        # create new_leaf
+                        new_leaf = Node()
+                        new_leaf.start = i
+                        new_leaf.end.append(i)
+                        new_leaf.suffix_index = i - active_length
+                        new_leaf_char_index = ord(text[new_leaf.start]) - ord(" ")
+                        # update start of existing leaf
+                        existing_leaf.start = internal_node.end[-1] + 1
+                        # link existing leaf and new_leaf to internal node
+                        existing_leaf_char_index = ord(text[existing_leaf.start]) - ord(" ")
+                        internal_node.edge[existing_leaf_char_index] = existing_leaf
+                        internal_node.edge[new_leaf_char_index] = new_leaf
+                        # replace exisiting leaf with internal node at active_node.edge
+                        active_node.edge[existing_leaf_char_index] = internal_node
+
+                        # update remainder and active node
+                        remainder -= 1
+                        # active_node = no change
+                        active_length -= 1
+
+                        print("active node")
+                        for index, edge in enumerate(active_node.edge):
+                            if edge is not None:
+                                print(index)
+                        print("before change: " + str(active_edge.suffix_index))
+                        active_edge_char_index = ord(text[i - active_length]) - ord(" ")
+                        active_edge = active_node.edge[active_edge_char_index]
+
+
+
         
-        # debug code
-        for edge in self.root.edge:
-            if edge is not None:
-                print(text[edge.start: edge.end[-1] + 1])
+            # debug code
+            print("step: " + str(i))
+            print("remainder: " + str(remainder))
+            for index, edge in enumerate(self.root.edge):
+                if edge is not None:
+                    print(str(index) + ": " + text[edge.start])
+                
 
 
 if __name__ == "__main__":
     text = "bananasna$"
-    building_text = "banana"
+    building_text = "bananas"
     suffix_tree = SuffixTree()
     suffix_tree.build_suffix_tree(building_text)

@@ -1,14 +1,9 @@
-# simulate growth of leaf only
 class Node:
     def __init__(self):
         self.edge = [None] * 256 # ASCII
-        # suffix link
         self.suffix_link = None
-        # start index of the substring (represent edge (start) leading to this node)
         self.start = -1
-        # end index of the substring (represent edge (start) leading to this node)
-        self.end  = [] # list to faciliate updates
-        # index of the suffix (leaf has non-negative value)
+        self.end = [] # List for dynamic end updates
         self.suffix_index = -1
 
 class SuffixTree:
@@ -16,53 +11,49 @@ class SuffixTree:
         self.root = Node()
         self.leaves = {}
 
-
     def build_suffix_tree(self, text):
-        # convert text into string list
         string_list = list(text)
-        
-        # initiate step counter, also serve as index of text
         i = -1
-
-        # remainder
         remainder = 0
-
-        # active point
         active_node = self.root
         active_edge = -1
         active_length = 0
 
-        # create suffix_tree with root
         while i < len(text) - 1:
             i += 1
             remainder += 1
-            # update end index of each leaf
-            for leaf in self.leaves:
-                node = self.leaves[leaf]
-                node.end.append(i)
 
-            char_index = ord(string_list[i]) - ord(' ')
-            if active_node.edge[char_index] == None:
+            for leaf in self.leaves.values():
+                leaf.end.append(i)
+
+            char_index = ord(string_list[i])
+
+            if active_node.edge[char_index] is not None:
+                if active_length == 0:
+                    active_edge = active_node.edge[char_index]
+                active_length += 1
+            else:
                 while remainder > 0:
                     if active_length == 0:
-                        # create new leaf
                         new_leaf = Node()
                         new_leaf.start = i
                         new_leaf.end.append(i)
                         new_leaf.suffix_index = i
-                        # link to active_node
                         self.leaves[i] = new_leaf
                         active_node.edge[char_index] = new_leaf
                         remainder -= 1
-        
-        # debug code
-        for edge in self.root.edge:
-            if edge is not None:
-                print(text[edge.start: edge.end[-1] + 1])
+                    else:
+                        # Handle the internal node creation and splitting logic here
+                        # Ensure correct handling of active point updates and suffix link
+                        pass
+
+            # Debug code (consider removing or commenting out for production)
+            print("Step:", i, "Remainder:", remainder)
+            for index, edge in enumerate(self.root.edge):
+                if edge is not None:
+                    print(f"{index}: {text[edge.start]}")
 
 if __name__ == "__main__":
-    leaf_text = "abn$"
+    text = "bananasna$"
     suffix_tree = SuffixTree()
-    suffix_tree.build_suffix_tree(leaf_text)
-
-
+    suffix_tree.build_suffix_tree(text)
