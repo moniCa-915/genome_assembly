@@ -75,10 +75,8 @@ class SuffixTree:
                             if edge is not None:
                                 print(str(index) + ": " +text[edge.start])
 
-                        existing_leaf = active_edge
-
                         internal_node = Node()
-                        internal_node.start = existing_leaf.start
+                        internal_node.start = active_edge.start
                         internal_node.end.append(i - active_length)
                         # create new_leaf
                         new_leaf = Node()
@@ -87,24 +85,31 @@ class SuffixTree:
                         new_leaf.suffix_index = i - active_length
                         new_leaf_char_index = ord(text[new_leaf.start]) - ord(" ")
                         # update start of existing leaf
+                        existing_leaf = Node()
                         existing_leaf.start = internal_node.end[-1] + 1
+                        existing_leaf.end.append(i)
+                        existing_leaf.suffix_index = active_edge.suffix_index
+                        existing_leaf_char_index = ord(text[existing_leaf.suffix_index]) - ord(" ")
                         # link existing leaf and new_leaf to internal node
-                        existing_leaf_char_index = ord(text[existing_leaf.start]) - ord(" ")
                         internal_node.edge[existing_leaf_char_index] = existing_leaf
                         internal_node.edge[new_leaf_char_index] = new_leaf
                         # replace exisiting leaf with internal node at active_node.edge
                         active_node.edge[existing_leaf_char_index] = internal_node
 
+                        # debug code to confirm if internal node link to active node: start, end, suffix_index = -1
+                        investigate = active_node.edge[existing_leaf_char_index]
+                        print("start index" + str(investigate.start), " end index: " + str(investigate.end[-1]) + " suffix index: " + str(investigate.suffix_index))
+                        print("\n")
                         # update remainder and active node
                         remainder -= 1
                         # active_node = no change
                         active_length -= 1
 
-                        print("active node")
-                        for index, edge in enumerate(active_node.edge):
-                            if edge is not None:
-                                print(index)
-                        print("before change: " + str(active_edge.suffix_index))
+                        # print("active node")
+                        # for index, edge in enumerate(active_node.edge):
+                        #     if edge is not None:
+                        #         print(index)
+                        # print("before change: " + str(active_edge.suffix_index))
                         active_edge_char_index = ord(text[i - active_length]) - ord(" ")
                         active_edge = active_node.edge[active_edge_char_index]
 
@@ -112,11 +117,15 @@ class SuffixTree:
 
         
             # debug code
+            print("\n")
             print("step: " + str(i))
             print("remainder: " + str(remainder))
             for index, edge in enumerate(self.root.edge):
                 if edge is not None:
                     print(str(index) + ": " + text[edge.start])
+            for leaf in self.leaves:
+                leaf_node = self.leaves[leaf]
+                print("Edge: " + text[leaf_node.start: leaf_node.end[-1] + 1] + " to leaf: " + str(leaf_node.suffix_index))
                 
 
 
