@@ -1,14 +1,146 @@
-#88 - 98
+class Node:
+    def __init__(self):
+        self.edge = [None] * 256 # ASCII
+        # suffix link
+        self.suffix_link = None
+        # start index of the substring (represent edge (start) leading to this node)
+        self.start = -1
+        # end index of the substring (represent edge (start) leading to this node)
+        self.end  = [] # list to faciliate updates
+        # index of the suffix (leaf has non-negative value)
+        self.suffix_index = -1
 
+class Edge:
+    def __init__(self, start_index, end_index):
+        self.start = start_index
+        self.end = end_index
+        self.From = None
+        self.To = None
+        self.char = None
+
+class SuffixTree:
+    def __init__(self):
+        self.root = Node()
+        self.leaves = {} # could be deleted
+
+
+    def build_suffix_tree(self, text):
+        # convert text into string list
+        string_list = list(text)
+
+        i = -1 # initiate step counter, also serve as index of text
+        remainder = 0 # remainder
+        # active point
+        active_node = self.root
+        active_edge = -1
+        active_length = 0
+
+        # create suffix_tree with root
+        while i < len(text) - 1:
+            i += 1
+            remainder += 1
+            # update end index of each leaf
+            for leaf in self.leaves:
+                node = self.leaves[leaf]
+                node.end.append(i)
+
+            char_index = ord(string_list[i]) - ord(' ')
+
+            # condition: if string_list[i] == next char after active point
+            if active_node.edge[char_index] != None:
+                if active_length == 0:
+                    active_edge = active_node.edge[char_index]
+                active_length += 1
+            
+            # condition: string_list[i] is not char after active_point -> add leaf or create internal_node
+            else:
+                last_internal_node = None
+                while remainder > 0:
+                    if active_length == 0: # create new leaf
+                        new_leaf = Node()
+                        new_leaf.start = i
+                        new_leaf.end.append(i)
+                        new_leaf.suffix_index = i
+                        # link to active_node
+                        self.leaves[i] = new_leaf
+                        active_node.edge[char_index] = new_leaf
+                        remainder -= 1
+                    else: # active_length != 0 -> create internal_node
+                        # debug code
+                        print("processing at " + str(i - active_length))
+                        print("active_edge is " + text[active_edge.start])
+                        print("active_length: " + str(active_length))
+                        print("active_node edge: ")
+                        for index, edge in enumerate(self.root.edge):
+                            if edge is not None:
+                                print(str(index) + ": " +text[edge.start])
+
+                        internal_node = Node()
+                        internal_node.start = active_edge.start
+                        internal_node.end.append(internal_node.start + active_length - 1)
+                        # create new_leaf
+                        new_leaf = Node()
+                        new_leaf.start = i
+                        new_leaf.end.append(i)
+                        new_leaf.suffix_index = i - active_length
+                        new_leaf_char_index = ord(text[new_leaf.start]) - ord(" ")
+                        
+                        
                         # update start of existing leaf or internal_nodes
                         existing_node = Node()
                         existing_node.start = internal_node.end[-1] + 1
+                        existing_node_char_index = ord(text[existing_node.start]) - ord(" ")
 
-                        existing_node.end.append(i) # leaf, internal_node: no change
-                        existing_node.suffix_index = active_edge.suffix_index # internal_node: set to -1
-                        existing_node_char_index = ord(text[existing_node.suffix_index]) - ord(" ") # internal_node: ord(text[existing_node.start) - ord(" ") 
+                        
+                        next_to_active_node_index = ord(text[internal_node.start]) - ord(" ")
+                        if active_node.edge[next_to_active_node_index] != -1:
+                            existing_node.end.append(i)
+                            existing_node.suffix_index = active_edge.suffix_index
+                        else:
+                            existing_node.suffix_index = -1
+
+                        
+                        
                         # link existing leaf and new_leaf to internal node
-                        internal_node.edge[existing_node_char_index] = existing_node
-                        internal_node.edge[new_leaf_char_index] = new_leaf # no new leaf
+                        internal_node.edge[next_to_active_node_index] = existing_node
+                        internal_node.edge[new_leaf_char_index] = new_leaf
                         # replace exisiting leaf with internal node at active_node.edge
                         active_node.edge[existing_node_char_index] = internal_node
+
+                        # debug code to confirm if internal node link to active node: start, end, suffix_index = -1
+                        investigate = active_node.edge[existing_node_char_index]
+                        print("start index" + str(investigate.start), " end index: " + str(investigate.end[-1]) + " suffix index: " + str(investigate.suffix_index))
+                        print("\n")
+                        # update remainder
+                        remainder -= 1
+                        # update active edge and active length, active_node = no change
+                        active_length -= 1
+                        active_edge_char_index = ord(text[i - active_length]) - ord(" ")
+                        active_edge = active_node.edge[active_edge_char_index]
+                        # if last internal_node exist, link last internal_node to internal_node
+                        if last_internal_node != None:
+                            last_internal_node.suffix_link = internal_node
+                        last_internal_node = internal_node
+
+            # debug code
+            print("\n")
+            print("step: " + str(i))
+            print("remainder: " + str(remainder))
+            for index, edge in enumerate(self.root.edge):
+                if edge is not None:
+                    print(str(index) + ": " + text[edge.start])
+            for child_node in self.root.edge:
+                if child_node != None:
+                    print("Edge: " + text[child_node.start: child_node.end[-1] + 1] + " to leaf: " + str(child_node.suffix_index))
+                    if child_node.suffix_index == -1:
+                        for internal_node in child_node.edge:
+                            if internal_node != None:
+                                print(text[internal_node.start: internal_node.end[-1] + 1])
+                
+
+
+if __name__ == "__main__":
+    text = "bananasna$"
+    building_text = "bananas"
+    suffix_tree = SuffixTree()
+    suffix_tree.build_suffix_tree(building_text)
