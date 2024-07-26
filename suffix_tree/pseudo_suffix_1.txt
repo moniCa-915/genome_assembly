@@ -32,6 +32,7 @@
                 b. active_length == 0 (create new leaf)
                     b-1. create new_leaf attach to root
                     b-2. decrement remainder
+                    
 
         # read thru each character of text
         for i in range(len(text)):

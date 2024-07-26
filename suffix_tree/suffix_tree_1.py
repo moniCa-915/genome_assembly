@@ -54,6 +54,7 @@ class SuffixTree:
             
             # condition: string_list[i] is not char after active_point -> add leaf or create internal_node
             else:
+                last_internal_node = None
                 while remainder > 0:
                     if active_length == 0: # create new leaf
                         new_leaf = Node()
@@ -76,14 +77,15 @@ class SuffixTree:
 
                         internal_node = Node()
                         internal_node.start = active_edge.start
-                        internal_node.end.append(i - active_length)
+                        internal_node.end.append(internal_node.start + active_length - 1)
                         # create new_leaf
                         new_leaf = Node()
                         new_leaf.start = i
                         new_leaf.end.append(i)
                         new_leaf.suffix_index = i - active_length
                         new_leaf_char_index = ord(text[new_leaf.start]) - ord(" ")
-                        # update start of existing leaf
+                        
+                        # update start of existing leaf or internal_nodes
                         existing_leaf = Node()
                         existing_leaf.start = internal_node.end[-1] + 1
                         existing_leaf.end.append(i)
@@ -105,6 +107,10 @@ class SuffixTree:
                         active_length -= 1
                         active_edge_char_index = ord(text[i - active_length]) - ord(" ")
                         active_edge = active_node.edge[active_edge_char_index]
+                        # if last internal_node exist, link last internal_node to internal_node
+                        if last_internal_node != None:
+                            last_internal_node.suffix_link = internal_node
+                        last_internal_node = internal_node
 
             # debug code
             print("\n")
@@ -116,6 +122,10 @@ class SuffixTree:
             for child_node in self.root.edge:
                 if child_node != None:
                     print("Edge: " + text[child_node.start: child_node.end[-1] + 1] + " to leaf: " + str(child_node.suffix_index))
+                    if child_node.suffix_index == -1:
+                        for internal_node in child_node.edge:
+                            if internal_node != None:
+                                print(text[internal_node.start: internal_node.end[-1] + 1])
                 
 
 
