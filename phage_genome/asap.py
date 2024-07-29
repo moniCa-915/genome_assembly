@@ -42,11 +42,11 @@ class PrefixTree:
         for layer_1 in self.root.children:
             path = 0
             if layer_1 is not None:
-                print(f"start from {self.strings[layer_1.interval[0]][path: path + layer_1.chain_len + 1]}, interval = {layer_1.interval}")
+                print(f"start from {self.strings[layer_1.interval[0]][path: path + layer_1.chain_len + 1]}, chain_len = {layer_1.chain_len}, interval = {layer_1.interval}")
                 path += (layer_1.chain_len + 1)
                 for layer_2 in layer_1.children:
                     if layer_2 is not None:
-                        print(f"\t->{self.strings[layer_2.interval[0]][path: path + layer_2.chain_len + 1]}, interval = {layer_2.interval}")
+                        print(f"\t->{self.strings[layer_2.interval[0]][path: path + layer_2.chain_len + 1]}, chain_len = {layer_2.chain_len},  interval = {layer_2.interval}")
 
     def add_first_string(self, current_node, string_id, string, path_len):
         new_node = Node(len(string) - path_len - 1, [string_id, string_id])
@@ -115,58 +115,80 @@ class PrefixTree:
         starting_points = [-1] * len(self.strings)
         for string_index, string in enumerate(self.strings):
             starting_point = 1
-            position_of_suffix = starting_point
-
-            # debug code
-            print(f"process index {string_index}: {string}")
-
+            print(f"process string_index {string_index}: {string}")
             while starting_point < len(string): # check each suffix of string
-                if position_of_suffix >= len(string):
-                    break
-                print(f"\t suffix = {string[starting_point:]}")
                 current_node = self.root
                 local_position = 1
                 path_len = 0
-                check_suffix = True
-                while check_suffix:
-                    if position_of_suffix >= len(string):
-                        print("position_of_suffix out of range")
-                        check_suffix = False
-                        break
-                    current_suffix_char = string[position_of_suffix]
-                    # case 1: find prefix-suffix match
-                    if position_of_suffix == len(string) - 1:
-                        starting_points[string_index] = starting_point
-                        pairs[starting_point] = current_node.interval
-                        break
-                    # case 2: within same node
-                    if local_position <= current_node.chain_len:
-                        if path_len + local_position - 1 < len(self.strings[current_node.interval[0]]):
-                            compare_char = self.strings[current_node.interval[0]][path_len + local_position - 1]
-                            if current_suffix_char == compare_char:
-                                local_position += 1
-                                position_of_suffix += 1
-                            else:
-                                starting_point += 1
-                                check_suffix = False
-                                break #?
-                        else:
-                            print("path length out of range")
-                            check_suffix = False
-                            break
-                    # case 3: to next node
-                    else:
-                        index_suffix_char = nucleotides.index(current_suffix_char)
-                        if current_node.children[index_suffix_char] != None:
-                            path_len += (current_node.chain_len + 1)
-                            current_node = current_node.children[index_suffix_char]
-                            position_of_suffix += 1
-                        else:
-                            starting_point += 1
-                            check_suffix = False
-                            break #?                            
+                found, pair = self.find_matched_prefix(starting_point, string, current_node, local_position, path_len)
+                if found:
+                    pairs[string_index] = pair
+                    starting_points[string_index] = starting_point
+                    break
+                else:
+                    starting_point += 1
+                     
         return pairs, starting_points
-    
+
+    def find_matched_prefix(self, starting_point, string, current_node, local_position, path_len):
+        found = False
+        pair = []
+        position_of_suffix = starting_point
+        print(f"\tprocess suffix: {string[starting_point:]}")
+        while position_of_suffix < len(string):
+            current_suffix_char = string[position_of_suffix]
+            current_suffix_char_index = nucleotides.index(current_suffix_char)
+            # case 1: find prefix-suffix match
+            if position_of_suffix == len(string) - 1:
+                print(f"\t\tenter case 1")
+                if len(current_node.interval) > 1 and path_len + local_position - 1 < len(self.strings[current_node.interval[0]]):
+                    compare_char = None
+                    if current_node.chain_len == 0 and current_node.children[current_suffix_char_index] is not None:
+                        current_node = current_node.children[current_suffix_char_index]
+                        found = True
+                        pair = current_node.interval
+                        return found, pair
+                    if current_node.chain_len != 0:
+                        compare_char = self.strings[current_node.interval[0]][path_len + local_position - 1]
+                        print(f"\t\t{current_suffix_char} compare to {compare_char}")
+                        if current_suffix_char == compare_char:
+                            print(f"\t\tenter case 1")
+                            found = True
+                            pair = current_node.interval
+                            return found, pair
+                        else:
+                            break
+                if current_node.chain_len == 0 and current_node.children[current_suffix_char_index] is not None:
+                    current_node = current_node.children[current_suffix_char_index]
+                    found = True
+                    pair = current_node.interval
+                    return found, pair
+                else: break
+            # case 2: within same node
+            if local_position <= current_node.chain_len:
+                if path_len + local_position - 1 < len(self.strings[current_node.interval[0]]):
+                    print(f"enter case 2")
+                    compare_char = self.strings[current_node.interval[0]][path_len + local_position - 1]
+                    if current_suffix_char == compare_char:
+                        local_position += 1
+                        position_of_suffix += 1
+                    else:
+                        break
+                else:
+                    break
+            # case 3: to next node
+            else:
+                
+                if current_node.children[current_suffix_char_index] != None:
+                    print(f"\t\tenter case 3")
+                    path_len += (current_node.chain_len + 1)
+                    current_node = current_node.children[current_suffix_char_index]
+                    position_of_suffix += 1
+                else:
+                    break
+        return found, pair
+
+
     def build_seq(self):
         pairs, starting_point = self.find_suffix_prefix_pairs()
         # build sequence by passing thru each pair from index = 0
@@ -177,8 +199,8 @@ if __name__ == "__main__":
     test_strings_2 = ["AAC", "ACG", "GAA", "GTT", "TCG"]
 
     # initiate Tree
-    prefix_tree = PrefixTree(test_strings_2)
+    prefix_tree = PrefixTree(test_strings)
     prefix_tree.build_suffix_tree()
-    prefix_tree.find_suffix_prefix_pairs()
+    print(prefix_tree.find_suffix_prefix_pairs())
 
 

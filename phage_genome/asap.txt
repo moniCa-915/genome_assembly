@@ -1,2 +1,22 @@
-create prefix trie
-1. add first string into prefix trie
+find_suffix_prefix_pairs
+
+initiate pairs, starting_points
+for string in strings:
+    initiate starting_point = 1, position_of_suffix = starting_point
+    while starting_point < len(string): # (outer while loop) # define suffixes of string
+        initiate current_node = root, local_position = 1, path_len = 0
+
+        found, pair = find_matched_prefix(starting_point, current_node, local_position, path_len):
+        if found:
+            pairs[string_index] = pair
+            starting_points[string_index] = starting_point
+            break
+        else:
+            starting_point += 1
+
+return pairs, starting_points
+
+find_matched_prefix
+    
+    
+    return found, pair
