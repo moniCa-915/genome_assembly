@@ -190,8 +190,18 @@ class PrefixTree:
 
 
     def build_seq(self):
-        pairs, starting_point = self.find_suffix_prefix_pairs()
+        pairs, starting_points = self.find_suffix_prefix_pairs()
         # build sequence by passing thru each pair from index = 0
+        for string_index in range(len(starting_points)):
+            visited = [False] * len(starting_points)
+            sequence = []
+
+    def depth_first_search(self, starting_index, pairs, starting_points, visited, sequence):
+        visited[starting_index] = True
+        for next_index in range(pairs[starting_index][0], pairs[starting_index][1]):
+            if visited[next_index] == False:
+                
+                self.depth_first_search(next_index, pairs, starting_points, sequence)
 
 if __name__ == "__main__":
 
