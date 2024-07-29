@@ -146,7 +146,8 @@ class PrefixTree:
                     if current_node.chain_len == 0 and current_node.children[current_suffix_char_index] is not None:
                         current_node = current_node.children[current_suffix_char_index]
                         found = True
-                        pair = current_node.interval
+                        for index in range(current_node.interval[0], current_node.interval[1] + 1):
+                            pair.append(index)
                         return found, pair
                     if current_node.chain_len != 0:
                         compare_char = self.strings[current_node.interval[0]][path_len + local_position - 1]
@@ -154,14 +155,16 @@ class PrefixTree:
                         if current_suffix_char == compare_char:
                             print(f"\t\tenter case 1")
                             found = True
-                            pair = current_node.interval
+                            for index in range(current_node.interval[0], current_node.interval[1] + 1):
+                                pair.append(index)
                             return found, pair
                         else:
                             break
                 if current_node.chain_len == 0 and current_node.children[current_suffix_char_index] is not None:
                     current_node = current_node.children[current_suffix_char_index]
                     found = True
-                    pair = current_node.interval
+                    for index in range(current_node.interval[0], current_node.interval[1] + 1):
+                        pair.append(index)
                     return found, pair
                 else: break
             # case 2: within same node
@@ -194,14 +197,14 @@ class PrefixTree:
         # build sequence by passing thru each pair from index = 0
         for string_index in range(len(starting_points)):
             visited = [False] * len(starting_points)
-            sequence = []
+        sequence = []
 
-    def depth_first_search(self, starting_index, pairs, starting_points, visited, sequence):
+    def depth_first_search(self, starting_index, pairs, starting_points, visited):
         visited[starting_index] = True
-        for next_index in range(pairs[starting_index][0], pairs[starting_index][1]):
-            if visited[next_index] == False:
-                
-                self.depth_first_search(next_index, pairs, starting_points, sequence)
+        while True:
+            for next_index in range(pairs[starting_index][0], pairs[starting_index][1]):
+                if visited[next_index] == False:
+                    self.depth_first_search(next_index, pairs, starting_points)
 
 if __name__ == "__main__":
 
@@ -209,7 +212,7 @@ if __name__ == "__main__":
     test_strings_2 = ["AAC", "ACG", "GAA", "GTT", "TCG"]
 
     # initiate Tree
-    prefix_tree = PrefixTree(test_strings)
+    prefix_tree = PrefixTree(test_strings_2)
     prefix_tree.build_suffix_tree()
     print(prefix_tree.find_suffix_prefix_pairs())
 
