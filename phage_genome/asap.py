@@ -228,8 +228,8 @@ class PrefixTree:
         sequence = [self.strings[0]]
         _, starting_points = self.find_suffix_prefix_pairs()
         sequence_order = self.find_hamiltonian_path()
+        previous = 0
         for string_index in sequence_order[1:]:
-            previous = 0
             previous_node = sequence_order[previous]
             previous_starting_point = starting_points[previous_node]
             len_previous_string = len(self.strings[previous_node])
@@ -242,12 +242,16 @@ class PrefixTree:
 
 # Once all the reads had been used in the reconstruction, use a simple "longest suffix-prefix of a single string" algorithm to trim the ends off the final sequence - this removes the loop from the final read to the first read in the circular sequence
 
-    def depth_first_search(self, starting_index, pairs, starting_points, visited):
-        visited[starting_index] = True
-        while True:
-            for next_index in range(pairs[starting_index][0], pairs[starting_index][1]):
-                if visited[next_index] == False:
-                    self.depth_first_search(next_index, pairs, starting_points)
+
+def circular_generator(genome, reads_len, overlap_len):
+    reads = []
+    for i in range(0, len(genome), overlap_len):
+        read = genome[i: i + reads_len]
+        if len(read) < reads_len:
+            lack_length = reads_len - len(read)
+            read += genome[:lack_length]
+        reads.append(read)
+    return reads
 
 if __name__ == "__main__":
 
@@ -255,11 +259,24 @@ if __name__ == "__main__":
     test_strings_2 = ["AAC", "ACG", "GAA", "GTT", "TCG"]
 
     # initiate Tree
-    prefix_tree = PrefixTree(test_strings_2)
-    prefix_tree.build_suffix_tree()
-    print(prefix_tree.find_suffix_prefix_pairs())
-    print(prefix_tree.find_hamiltonian_path())
-    print(prefix_tree.construct_seq())
+    # prefix_tree = PrefixTree(test_strings_2)
+    # prefix_tree.build_suffix_tree()
+    # print(prefix_tree.find_suffix_prefix_pairs())
+    # print(prefix_tree.find_hamiltonian_path())
+    # seq_list = prefix_tree.construct_seq()
+    # print("".join(seq_list))
 
+    with open("light_phage.txt", "r") as file:
+        sequence = file.read()
+    read_length = 100
+    overlap_length = 12 # change from 80 to 12
+    reads = circular_generator(sequence, read_length, overlap_length)
+    print(reads)
+    # prefix_tree = PrefixTree(reads)
+    # prefix_tree.build_suffix_tree()
+    # print(prefix_tree.find_suffix_prefix_pairs())
+    # print(prefix_tree.find_hamiltonian_path())
+    # seq_list = prefix_tree.construct_seq()
+    # print("".join(seq_list))
 
 
