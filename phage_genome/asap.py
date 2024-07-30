@@ -199,6 +199,10 @@ class PrefixTree:
             visited = [False] * len(starting_points)
         sequence = []
 
+# Once you find all the suffix-prefix pair matches between reads, you don't need to use a graph data structure to reconstruct the entire genome - just start at the first read, greedily merge it with the highest-overlapping read in its' list of overlapping pairs (that hasn't already been used), then mark the starting read as visited, and continue
+
+# Once all the reads had been used in the reconstruction, use a simple "longest suffix-prefix of a single string" algorithm to trim the ends off the final sequence - this removes the loop from the final read to the first read in the circular sequence
+
     def depth_first_search(self, starting_index, pairs, starting_points, visited):
         visited[starting_index] = True
         while True:
