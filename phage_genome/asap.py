@@ -192,12 +192,33 @@ class PrefixTree:
         return found, pair
 
 
-    def build_seq(self):
+    def seqence_order(self):
         pairs, starting_points = self.find_suffix_prefix_pairs()
         # build sequence by passing thru each pair from index = 0
-        for string_index in range(len(starting_points)):
-            visited = [False] * len(starting_points)
-        sequence = []
+        visited = [False] * len(starting_points)
+        sequence_order = [0]
+        stack = [0] # 0: starting point
+        while stack:
+            current_index = stack.pop()
+            print(current_index)
+
+            visited[current_index] = True
+            if pairs[current_index]:
+                most_overlapping = (None, float('inf'))
+                for next_index in pairs[current_index]:
+                    if not visited[next_index]:
+                        most_overlapping = self.find_most_overlapping((next_index, starting_points[next_index]), most_overlapping)
+                stack.append(most_overlapping[0])
+                sequence_order.append(most_overlapping[0])
+            else: # no next index
+                break
+        return visited, sequence_order
+
+    def find_most_overlapping(self, candidate, winner): # (next_index, starting_points[next_index])
+        if candidate[1] < winner[1]:
+            return candidate
+        return winner
+
 
 # Once you find all the suffix-prefix pair matches between reads, you don't need to use a graph data structure to reconstruct the entire genome - just start at the first read, greedily merge it with the highest-overlapping read in its' list of overlapping pairs (that hasn't already been used), then mark the starting read as visited, and continue
 
@@ -219,5 +240,6 @@ if __name__ == "__main__":
     prefix_tree = PrefixTree(test_strings_2)
     prefix_tree.build_suffix_tree()
     print(prefix_tree.find_suffix_prefix_pairs())
+    print(prefix_tree.seqence_order())
 
 

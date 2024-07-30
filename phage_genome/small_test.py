@@ -1,11 +1,14 @@
+def find_most_overlapping(candidate, winner): # (next_index, starting_points[next_index])
+    if candidate[1] < winner[1]:
+        return candidate
+    return winner
+
+
 if __name__ == "__main__":
-    strings = ["AAGGG", "ACTTG", "ACTTT", "AGGCT", "GCCAC", "TCCGC"]
-    pairs = [None] * len(strings)
-    for string_index, string in enumerate(strings):
-        starting_point = 1
-        print(string)
-        while starting_point < len(string):
-            if starting_point == len(string) - 1:
-                print("found")
-                break
+    pairs = [[1], [2, 3], [0], [4], [2, 3]]
+    starting_points = [1, 2, 1, 2, 2]
+    known_value = (None, float('inf'))
+    for next_index in pairs[1]:
+        known_value = find_most_overlapping((next_index, starting_points[next_index]), known_value)
+    print(known_value)
         
