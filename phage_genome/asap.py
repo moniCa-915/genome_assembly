@@ -191,34 +191,52 @@ class PrefixTree:
                     break
         return found, pair
 
-
-    def seqence_order(self):
+    def find_hamiltonian_path(self):
         pairs, starting_points = self.find_suffix_prefix_pairs()
-        # build sequence by passing thru each pair from index = 0
-        visited = [False] * len(starting_points)
-        sequence_order = [0]
-        stack = [0] # 0: starting point
-        while stack:
-            current_index = stack.pop()
-            print(current_index)
+        def backtrack(current_vertex, visited, path):
+            # If all vertices are visited, return the path
+            if all(visited) == True:
+                return path
+            
+            # Try all possible next vertices
+            for neighbor in pairs[current_vertex]:
+                if not visited[neighbor]:
+                    visited[neighbor] = True
+                    path.append(neighbor)
+                    
+                    result = backtrack(neighbor, visited, path)
+                    if result:  # If a valid path is found, return it
+                        return result
+                    
+                    # Backtrack
+                    visited[neighbor] = False
+                    path.pop()
+            
+            return None
 
-            visited[current_index] = True
-            if pairs[current_index]:
-                most_overlapping = (None, float('inf'))
-                for next_index in pairs[current_index]:
-                    if not visited[next_index]:
-                        most_overlapping = self.find_most_overlapping((next_index, starting_points[next_index]), most_overlapping)
-                stack.append(most_overlapping[0])
-                sequence_order.append(most_overlapping[0])
-            else: # no next index
-                break
-        return visited, sequence_order
-
-    def find_most_overlapping(self, candidate, winner): # (next_index, starting_points[next_index])
-        if candidate[1] < winner[1]:
-            return candidate
-        return winner
-
+        visited = [False] * len(pairs)
+        path = [0]
+        visited[0] = True
+        
+        result = backtrack(0, visited, path)
+        if result:  # If a path is found starting from this vertex, return it
+            return result
+        
+        return None  # If no Hamiltonian path is found
+    
+    def construct_seq(self):
+        sequence = [self.strings[0]]
+        _, starting_points = self.find_suffix_prefix_pairs()
+        sequence_order = self.find_hamiltonian_path()
+        for string_index in sequence_order[1:]:
+            previous = 0
+            previous_node = sequence_order[previous]
+            previous_starting_point = starting_points[previous_node]
+            len_previous_string = len(self.strings[previous_node])
+            next_seq_starting = len_previous_string - previous_starting_point
+            sequence.append(self.strings[string_index][next_seq_starting:])
+            previous += 1
+        return sequence
 
 # Once you find all the suffix-prefix pair matches between reads, you don't need to use a graph data structure to reconstruct the entire genome - just start at the first read, greedily merge it with the highest-overlapping read in its' list of overlapping pairs (that hasn't already been used), then mark the starting read as visited, and continue
 
@@ -240,6 +258,8 @@ if __name__ == "__main__":
     prefix_tree = PrefixTree(test_strings_2)
     prefix_tree.build_suffix_tree()
     print(prefix_tree.find_suffix_prefix_pairs())
-    print(prefix_tree.seqence_order())
+    print(prefix_tree.find_hamiltonian_path())
+    print(prefix_tree.construct_seq())
+
 
 
