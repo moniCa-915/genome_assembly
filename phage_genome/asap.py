@@ -1,8 +1,10 @@
 nucleotides = ["A", "C", "G", "T"]
 
 class Node: # chain_len, and interval (string ID range)
-    def __init__(self, chain_len = 0, interval = []):
+    def __init__(self, chain_len = 0, interval = None):
         self.chain_len = chain_len
+        if interval is None:
+            interval = []
         self.interval = interval
         self.children = [None] * 4
 
@@ -10,8 +12,8 @@ class PrefixTree:
     def __init__(self, strings):
         self.root = Node()
         self.strings = strings
-    def build_suffix_tree(self):
 
+    def build_suffix_tree(self):
         for string_id, string in enumerate(self.strings):
             current_node = self.root
 
@@ -192,7 +194,7 @@ class PrefixTree:
         return found, pair
 
     def find_hamiltonian_path(self):
-        pairs, starting_points = self.find_suffix_prefix_pairs()
+        pairs, _ = self.find_suffix_prefix_pairs()
         def backtrack(current_vertex, visited, path):
             # If all vertices are visited, return the path
             if all(visited) == True:
@@ -271,10 +273,10 @@ if __name__ == "__main__":
     read_length = 100
     overlap_length = 12 # change from 80 to 12
     reads = circular_generator(sequence, read_length, overlap_length)
-    print(reads)
-    # prefix_tree = PrefixTree(reads)
-    # prefix_tree.build_suffix_tree()
-    # print(prefix_tree.find_suffix_prefix_pairs())
+
+    prefix_tree = PrefixTree(reads)
+    prefix_tree.build_suffix_tree()
+    print(prefix_tree.find_suffix_prefix_pairs())
     # print(prefix_tree.find_hamiltonian_path())
     # seq_list = prefix_tree.construct_seq()
     # print("".join(seq_list))
