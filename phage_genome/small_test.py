@@ -201,18 +201,13 @@ class PrefixTree:
             # If all vertices are visited, return the path
             if all(visited) == True:
                 return path
-            else:
-                not_visited = []
-                for index in range(len(visited)):
-                    if visited[index] == False:
-                        not_visited.append(index)
-                print(not_visited)
             
             # Try all possible next vertices
             for neighbor in pairs[current_vertex]:
                 if not visited[neighbor]:
                     visited[neighbor] = True
                     path.append(neighbor)
+                    print(path)
                     result = backtrack(neighbor, visited, path)
                     if result:  # If a valid path is found, return it
                         return result
@@ -301,31 +296,31 @@ if __name__ == "__main__":
     test_strings_2 = ["AAC", "ACG", "GAA", "GTT", "TCG"]
 
     # initiate Tree
-    prefix_tree = PrefixTree(test_strings_2)
-    prefix_tree.build_suffix_tree()
-    print(prefix_tree.find_suffix_prefix_pairs())
-    print(prefix_tree.find_hamiltonian_path())
-    seq_list = prefix_tree.construct_seq()
-    print("".join(seq_list))
-
-    # with open("light_phage.txt", "r") as file:
-    #     sequence = file.read()
-    # read_length = 10
-    # overlap_length = 2 # change from 80 to 12
-    # reads = sorted(circular_generator(sequence, read_length, overlap_length))
-    # reads = sorted(list(set((reads))))
-    # prefix_tree = PrefixTree(reads)
+    # prefix_tree = PrefixTree(test_strings_2)
     # prefix_tree.build_suffix_tree()
-    # pairs, starting_points = prefix_tree.find_suffix_prefix_pairs()
-    # print(pairs)
-    # for node in pairs:
-    #     if len(pairs[node]) > 5:
-    #         print(f"reads with multiple pairs {node}: {reads[node]}")
-    #         print(f"\tstarting point: {starting_points[node]}")
-    #         print(f"\t\tlink to {[pairs[node]]}")
-    #     else:
-    #         print(f"starting point = {starting_points[node]}")
+    # print(prefix_tree.find_suffix_prefix_pairs())
     # print(prefix_tree.find_hamiltonian_path())
+    # seq_list = prefix_tree.construct_seq()
+    # print("".join(seq_list))
+
+    with open("light_phage.txt", "r") as file:
+        sequence = file.read()
+    read_length = 10
+    overlap_length = 2 # change from 80 to 12
+    reads = sorted(circular_generator(sequence, read_length, overlap_length))
+    reads = sorted(list(set((reads))))
+    prefix_tree = PrefixTree(reads)
+    prefix_tree.build_suffix_tree()
+    pairs, starting_points = prefix_tree.find_suffix_prefix_pairs()
+    print(pairs)
+    for node in pairs:
+        if len(pairs[node]) > 5:
+            print(f"reads with multiple pairs {node}: {reads[node]}")
+            print(f"\tstarting point: {starting_points[node]}")
+            print(f"\t\tlink to {[pairs[node]]}")
+        else:
+            print(f"starting point = {starting_points[node]}")
+    print(prefix_tree.find_hamiltonian_path())
     # seq_list = prefix_tree.construct_seq()
     # print("".join(seq_list))
 
